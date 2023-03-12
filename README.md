@@ -74,8 +74,8 @@ usmap <- function(df) {
     column(6, selectInput("state", "State:", state, selected = "Alabama"))
   ),
   fluidRow(
-    column(4, plotOutput("usmap", width = "100%", height = "400px")),
-    column(4, plotOutput("production", width = "100%", height = "400px"))
+    column(6, plotOutput("usmap", width = "100%", height = "400px")),
+    column(6, plotOutput("production", width = "100%", height = "400px"))
   ),
   fluidRow(
   column(12, HTML("<p>The usmap at the left side displays comparison of honey production between different states at a certain year (from 1995 to 2021), darker the color, greater the production. </p>

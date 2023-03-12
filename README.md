@@ -2,16 +2,10 @@
 title: "HW2"
 author: "Xinyi Wang"
 date: "2023-02-25"
-output: html_document
-  pdf_document:
-    latex_engine: pdflatex
-  always_allow_html: true
 ---
 
 
 ```{r,message = FALSE}
-library(feasts)
-library(tsibble)
 library(scales)
 library("knitr")
 library(maps)
@@ -43,8 +37,8 @@ head(honey_latlong)
 # Shiny App      
 ```{r}
 #to determine limits of legend
-min(honey_latlong$production)
-max(honey_latlong$production)
+min = min(honey_latlong$production)
+max = max(honey_latlong$production)
 
 #create functions
 plotProduction <- function(df) {
@@ -119,19 +113,6 @@ server <- function(input, output) {
 app = shinyApp(ui, server)
 ```
 
-```{r}
-library(feasts)
-library(tsibble)
-honey_tsi = 
-  honey_latlong %>% 
-  as_tsibble(index = year, key = state) %>% 
-  select(year, state, production)
-honey_tsi %>% 
-  ggplot()+
-  geom_line(aes(x = year, y = production)) +
-  labs(title = "Honey production time series plot")
-```
-
 
 # Write-ups
 
@@ -141,13 +122,6 @@ What are some interesting facts that you learned through the visualization. Prov
 
 2. What is the reactive graph structure of your application?
 **Write-up is in pdf uploaded on the Piazza**
-
-**The reactive graph structure is demonstrated below:**
-
-```{r echo = FALSE, out.width = "500px"}
-knitr::include_graphics("/Users/wangxinyi/Desktop/junior2/STAT 436/Homework/WechatIMG1882.png")
-
-```
 
 **The recordings of shiny app can be watched by clicking the [Click here to watch the video] below:**
 

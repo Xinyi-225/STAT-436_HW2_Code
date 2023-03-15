@@ -26,7 +26,7 @@ theme_set(theme_bw())
 
 # Data cleaning
 ```{r eruptions, echo=FALSE}
-honey_latlong = read.csv("US_honey_dataset_updated.csv") %>% select(-1) 
+honey_latlong = read.csv("https://raw.githubusercontent.com/Xinyi-225/STAT-436-DATA/main/US_honey_dataset_updated.csv") %>% select(-1) 
 year = pull(honey_latlong, year) %>% unique()
 state = pull(honey_latlong, state) %>% unique()
 head(honey_latlong)

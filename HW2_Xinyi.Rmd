@@ -1,0 +1,144 @@
+---
+title: "HW2"
+author: "Xinyi Wang"
+date: "2023-02-25"
+output: pdf_document
+---
+
+
+```{r,message = FALSE}
+library(scales)
+library("knitr")
+library(maps)
+library(rhandsontable)
+library(rnaturalearth)
+library(shinydashboard)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(shiny)
+library(tidyverse)
+library(lubridate)
+library(plotly)
+library(MAP)
+library(usmap)
+theme_set(theme_bw())
+```
+
+# Data cleaning
+```{r eruptions, echo=FALSE}
+honey_latlong = read.csv("https://raw.githubusercontent.com/Xinyi-225/STAT-436-DATA/main/US_honey_dataset_updated.csv") %>% select(-1) 
+year = pull(honey_latlong, year) %>% unique()
+state = pull(honey_latlong, state) %>% unique()
+head(honey_latlong)
+```
+
+
+
+# Shiny App      
+```{r}
+#to determine limits of legend
+min = min(honey_latlong$production)
+max = max(honey_latlong$production)
+
+#create functions
+plotProduction <- function(df) {
+  df %>% 
+  ggplot(aes(x = year, y = production)) + 
+  geom_point() +
+  geom_smooth() +
+    labs(title = "different states with change of production by years", y = "Production") +
+    guides(color = FALSE)+
+    scale_x_continuous(limits = c(min(year), max(year)), breaks = seq(min(year), max(year), 1)) +
+    theme(
+    axis.text.x = element_text(angle = 90))
+}
+
+usmap <- function(df) {
+  plot_usmap(data = df, values = "production",labels = TRUE) +
+    scale_fill_continuous(low = "white",high = "purple",name = "Production", 
+                          label = scales::comma) +
+    theme(legend.position = "bottom",
+          legend.key.width = unit(2.5, "cm")) +
+    scale_color_gradient2(limits = c(10000, 40000000)) +
+    labs(title = "usmap of different states' production in one year", color = "Production")
+}
+
+
+ 
+ ### definition of app
+ ui <- fluidPage(
+  titlePanel("Honey Production in the U.S.A."),
+  fluidRow(
+    column(6, sliderInput("year", "Year of Honey production:",
+                          min = min(year), max = max(year),value = min(year), step = 1,sep = "")),
+    column(6, selectInput("state", "State:", state, selected = "Alabama"))
+  ),
+  fluidRow(
+    column(6, plotOutput("usmap", width = "100%", height = "400px")),
+    column(6, plotOutput("production", width = "100%", height = "400px"))
+  ),
+  fluidRow(
+  column(12, HTML("<p>The usmap at the left side displays comparison of honey production between different states at a certain year (from 1995 to 2021), darker the color, greater the production. </p>
+                  <p>The second scatterplot at the right side shows the trend of change of honey production of a certain us state from 1995 to 2021. </p>
+                  <p><mark>The usmap focuses on geographic comparison in different states by controlling year, whereas scatterplot focuses on quantitative comparison in different years by controlling state. <mark></p>"))
+  )
+  )
+
+
+ 
+server <- function(input, output) {
+  state_selected <- reactive({
+    honey_latlong %>%
+      filter(state == input$state)
+  })
+  
+  output$production <- renderPlot({
+    plotProduction(state_selected())
+  })
+  
+  Production_year <- reactive({
+  honey_latlong %>%
+    filter(year == input$year)
+})
+
+  
+  output$usmap <- renderPlot({
+    usmap(Production_year())
+  })
+
+}
+
+
+ 
+app = shinyApp(ui, server)
+```
+
+
+# Write-ups
+
+What are some interesting facts that you learned through the visualization. Provide at least one unexpected finding.
+
+1. How did you create the interface? Were there any data preparation steps? What guided the style customization and interface layout that you used.
+
+2. What is the reactive graph structure of your application?
+
+**The code of shiny app can be seen in github by clicking the [Click here to see the code] below:**
+
+[Click here to see the code](https://github.com/Xinyi-225/STAT-436_HW2_Code)
+
+**The write-up can be seen by clicking the [Click here to view the write-up] below:**
+
+[Click here to view the write-up](https://cdn-uploads.piazza.com/paste/kkcct1jxw9t53n/e7abac4f9112ba1abbcb891f7b50ab34d285472e3457646b8caf09685ffeda9a/HW2_Write_up_(Xinyi_Wang).pdf)
+
+**The recording of shiny app can be watched by clicking the [Click here to watch the video] below:**
+
+[Click here to watch the video](https://www.youtube.com/watch?v=ixRFtPMzBqY)
+
+
+
+
+
+
+
+
